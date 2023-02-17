@@ -4,35 +4,20 @@
 //Выводим эту таблицу-календарь в html, можно со стилями.
 
 //*Желательно всю верстку построить с помощью javascript методов работы с DOM.
-  let month = 1, year = 2023;
-// do {
-//   month = parseInt(prompt('Введите номер месяца', '1') - 1); 
-// } while (month > 11 || month < 0 || isNaN(month));
 
-// do {
-//   year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
-// } while (year <= 1000 || year >= 9999 || isNaN(year));
 
 const createCalendar = () => {
-  let /* year = '', month = '',  */table = null;
+  let year = '', month = '', table = null;
   const monthsArray = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   const weekArray = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
-  // const enterMonth = () => {
-  //   do {
-  //     month = parseInt(prompt('Введите номер месяца', '1') - 1); 
-  //   } while (month > 11 || month < 0 || isNaN(month));
-  //   return month;
-  // }
-  // enterMonth();
+  do {
+    month = parseInt(prompt('Введите номер месяца', '1') - 1); 
+  } while (month > 11 || month < 0 || isNaN(month));
 
-  // const enterYear = () => {
-  //   do {
-  //     year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
-  //   } while (year <= 1000 || year >= 9999 || isNaN(year));
-  //   return year;
-  // }
-  // enterYear();
+  do {
+    year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
+  } while (year <= 1000 || year >= 9999 || isNaN(year));
 
   let date = new Date(year, month);
 
