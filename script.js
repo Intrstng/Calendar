@@ -4,27 +4,35 @@
 //Выводим эту таблицу-календарь в html, можно со стилями.
 
 //*Желательно всю верстку построить с помощью javascript методов работы с DOM.
+  let month = 1, year = 2023;
+// do {
+//   month = parseInt(prompt('Введите номер месяца', '1') - 1); 
+// } while (month > 11 || month < 0 || isNaN(month));
+
+// do {
+//   year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
+// } while (year <= 1000 || year >= 9999 || isNaN(year));
 
 const createCalendar = () => {
-  let year = '', month = '', table = null;
+  let /* year = '', month = '',  */table = null;
   const monthsArray = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   const weekArray = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
 
-  const enterMonth = () => {
-    do {
-      month = parseInt(prompt('Введите номер месяца', '1') - 1); 
-    } while (month > 11 || month < 0 || isNaN(month));
-    return month;
-  }
-  enterMonth();
+  // const enterMonth = () => {
+  //   do {
+  //     month = parseInt(prompt('Введите номер месяца', '1') - 1); 
+  //   } while (month > 11 || month < 0 || isNaN(month));
+  //   return month;
+  // }
+  // enterMonth();
 
-  const enterYear = () => {
-    do {
-      year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
-    } while (year <= 1000 || year >= 9999 || isNaN(year));
-    return year;
-  }
-  enterYear();
+  // const enterYear = () => {
+  //   do {
+  //     year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
+  //   } while (year <= 1000 || year >= 9999 || isNaN(year));
+  //   return year;
+  // }
+  // enterYear();
 
   let date = new Date(year, month);
 
@@ -62,9 +70,9 @@ const createCalendar = () => {
     table.children[2].append(document.createElement('tr'));
 
     for (let i = 0; i < day - 1; i++) {
-      table.children[2].lastElementChild.append(document.createElement('th'));
+      table.children[2].lastElementChild.append(document.createElement('td'));
     }
-    const firstDayOfTheMonth = document.createElement('th');
+    const firstDayOfTheMonth = document.createElement('td');
     firstDayOfTheMonth.textContent = 1;
     table.children[2].lastElementChild.append(firstDayOfTheMonth);
   } 
@@ -78,12 +86,12 @@ const createCalendar = () => {
     let nextDay = null;
     setNextDay(day);
     if (table.children[2].lastElementChild.children.length < 7) {
-      nextDay = document.createElement('th');
+      nextDay = document.createElement('td');
       nextDay.textContent = day.getDate();
       table.children[2].lastElementChild.append(nextDay);
     } else if (table.children[2].lastElementChild.children.length === 7) {
       table.children[2].lastElementChild.after(document.createElement('tr'));
-      nextDay = document.createElement('th');
+      nextDay = document.createElement('td');
       nextDay.textContent = day.getDate();
       table.children[2].lastElementChild.append(nextDay);
     }
@@ -102,6 +110,13 @@ const createCalendar = () => {
   }
   fillTheCalendarWithDays(date);
 }
-window.onload = createCalendar();
+//window.onload = 
+createCalendar();
+
+// setInterval(()=> {
+//   month++;
+//   document.querySelector('.calendar').remove();
+//   createCalendar()
+// }, 1000)
 
 
