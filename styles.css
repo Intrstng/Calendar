@@ -17,9 +17,9 @@ tbody {
 }
 
 caption {
-  margin-top: 20px;
+  margin-top: 15px;
   caption-side: bottom;
-  color: rgba(88, 50, 24, 0.8);
+  color: rgb(255, 255, 255);
   font-size: 1.2rem;
 }
 
@@ -58,4 +58,50 @@ td:nth-child(6),
 td:nth-child(7) {
   color: rgb(255, 255, 255);
   background-color: rgba(181, 181, 181, 0.3);
+}
+
+.fa-angle-left,
+.fa-angle-right,
+.fa-angle-double-left,
+.fa-angle-double-right {
+  color: rgb(255, 255, 255);
+  font-size: 1.2rem;
+  position: absolute;
+  top: 400px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.fa-angle-left {
+  left: 105px;
+}
+
+.fa-angle-right {
+  left: 360px;
+}
+
+.fa-angle-double-left {
+  left: 75px;
+}
+
+.fa-angle-double-right {
+  left: 385px;
+}
+
+.fa-angle-left:hover,
+.fa-angle-right:hover,
+.fa-angle-double-left:hover,
+.fa-angle-double-right:hover {
+  transform: scale(1.2);
+  color:rgba(255, 255, 255, 0.5);
+}
+
+.another-month {
+  background-color: rgba(193, 195, 73, 0.3) !important;
+  color: rgba(88, 50, 24, 0.4) !important;
+}
+
+.today {
+  background-color: rgba(214, 5, 5, 0.7) !important;
+  color: rgba(255, 255, 255, 0.7) !important;
 }
