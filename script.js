@@ -81,7 +81,6 @@ function createCalendar() {
 
   function mapTheCalendarWithDays(day) {
     let nextDay = null;
-                                      let today = day;
     setNextDay(day);
     if (table.children[2].lastElementChild.children.length < 7) {
       nextDay = document.createElement('td');
