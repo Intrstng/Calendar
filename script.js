@@ -1,30 +1,139 @@
-//Спрашиваем у пользователя месяц (номер месяца) и год через prompt();
-//Используя свойства и методы объекта Date строим таблицу-календарь для
-//этого месяца и года, с названиями дней недели, где понедельник – начало недели.
-//Выводим эту таблицу-календарь в html, можно со стилями.
+const monthsArrForInputSelect = ['Выбрать месяц', 'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+const monthsArrForInputSelectValues = ['select', 'january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+const yearsArrForInputSelect = ['Выбрать год', '1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989', '1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'];
 
-//*Желательно всю верстку построить с помощью javascript методов работы с DOM.
-let year = '', month = '';
-  do {
-    month = parseInt(prompt('Введите номер месяца', '1') - 1); 
-  } while (month > 11 || month < 0 || isNaN(month));
+function createLabelForSelectInput(name, content) {
+  const selectInputLabel = document.createElement('label');
+  selectInputLabel.setAttribute('for', name);
+  selectInputLabel.textContent = content;
+  return selectInputLabel;
+}
 
-  do {
-    year = parseInt(prompt('Введите год (четыре цифры)', '2023'));
-  } while (year <= 1000 || year >= 9999 || isNaN(year));
+function createSelectInput(name, optionsArr) {
+  const selectInput = document.createElement('select');
+  selectInput.id = name;
+  optionsArr.forEach((option, i) => {
+    const selectOption = document.createElement('option');
+    if (name === 'month') {
+      selectOption.value = monthsArrForInputSelectValues[i];
+    } else if ((name === 'year')) {
+      selectOption.value = option;
+    }
+    selectOption.textContent = option;
+    selectInput.append(selectOption);
+  })
+  return selectInput;
+}
 
-function createCalendar() {
+function createCalendarButton(name, classBtn) {
+  const createNewCalendarBtn = document.createElement('button');
+  createNewCalendarBtn.setAttribute('type', 'button');
+  createNewCalendarBtn.textContent = name;
+  createNewCalendarBtn.className = classBtn;
+  return createNewCalendarBtn;
+}
+
+function createHeaderSelect() {
+  const divHeader = document.createElement('div');
+  divHeader.className = 'header';
+  divHeader.append(createLabelForSelectInput('month', 'Месяц'));
+  divHeader.append(createSelectInput('month', monthsArrForInputSelect));
+  document.body.prepend(divHeader);
+
+    divHeader.append(createLabelForSelectInput('year', 'Год'));
+    divHeader.append(createSelectInput('year', yearsArrForInputSelect));
+    document.body.prepend(divHeader);
+    document.querySelector('#year').firstElementChild.value = 'select';
+      
+      divHeader.append(createCalendarButton('Создать', 'create-btn'));
+}
+createHeaderSelect()
+
+function disableCreateCalendarBtn() {
+  if (document.getElementById('month').value === 'select' || document.getElementById('year').value === 'select') {
+    document.querySelector('.create-btn').disabled = true;
+  } else if (document.getElementById('month').value !== 'select' && document.getElementById('year').value !== 'select') {
+    document.querySelector('.create-btn').disabled = false;
+  }
+}
+disableCreateCalendarBtn();
+
+document.getElementById('month').addEventListener('change', disableCreateCalendarBtn);
+document.getElementById('year').addEventListener('change', disableCreateCalendarBtn);
+
+function getDataFromSelectIputs() {
+  month = parseInt(document.getElementById('month').selectedIndex - 1);
+  year = parseInt(document.getElementById('year').value);
+  document.getElementById('month').selectedIndex = 0;
+  document.getElementById('year').selectedIndex = 0;
+  document.querySelector('.delete-btn').disabled = false;
+  disableCreateCalendarBtn();
+}
+
+function addDelCalendarBtn() {
+  document.querySelector('div').append(createCalendarButton('Удалить', 'delete-btn'));
+  document.querySelector('.delete-btn').addEventListener('click', removeFirstAddedCalendar);
+}
+document.querySelector('.create-btn').addEventListener('click', addDelCalendarBtn, { once: true });
+document.querySelector('.create-btn').addEventListener('click', getDataFromSelectIputs);
+document.querySelector('.create-btn').addEventListener('click', function() { createCalendar(document.body, 'append', month, year) });
+
+function removeFirstAddedCalendar() {
+  const calendars = document.querySelectorAll('.calendar-container');
+  calendars[0].remove();
+  if (calendars.length === 1) {
+    document.querySelector('.delete-btn').disabled = true;
+  }
+}
+
+function createCalendar(location, action, monthInp, yearInp) {
+  let month = monthInp;
+  let year = yearInp;
   let table = null;
   const monthsArray = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
   const weekArray = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'];
-  let date = new Date(year, month);
-
+  let date = new Date(year, month); 
+  
   function createTable() {
+    const tableDiv = document.createElement('div');
+    tableDiv.className = 'calendar-container';
     const title = `${monthsArray[date.getMonth()]} ${date.getFullYear()} года`;
     table = document.createElement('table');
     table.className = 'calendar';
     table.innerHTML = `<caption>${title}</caption>`;
-    document.body.append(table);
+    tableDiv.append(table);
+    if (action === 'append') {
+      location.append(tableDiv);
+    } else if (action === 'after') {
+      location.after(tableDiv);
+    }
+            
+    //CreateCalendarArrows
+    const leftArrowMonth = document.createElement('i');
+    const rightArrowMonth = document.createElement('i');
+    const leftArrowYear = document.createElement('i');
+    const rightArrowYear = document.createElement('i');
+
+    leftArrowMonth.classList.add('fa', 'fa-angle-left');
+    rightArrowMonth.classList.add('fa', 'fa-angle-right');
+    leftArrowYear.classList.add('fa', 'fa-angle-double-left');
+    rightArrowYear.classList.add('fa', 'fa-angle-double-right');
+    leftArrowMonth.classList.add('prevBtnMonth');
+    rightArrowMonth.classList.add('nextBtnMonth');
+    leftArrowYear.classList.add('prevBtnYear');
+    rightArrowYear.classList.add('nextBtnYear');
+    tableDiv.append(leftArrowYear, leftArrowMonth, rightArrowMonth,rightArrowYear);
+    
+    const showNextMonthInCalendarScoped = showNextMonthInCalendar(month);
+    const showPrevMonthInCalendarScoped = showPrevMonthInCalendar(month);
+    const showNextYearInCalendarScoped = showNextYearInCalendar(year);
+    const showPrevYearInCalendarScoped = showPrevYearInCalendar(year);
+
+    //AddHandlersCalendarArrows
+    tableDiv.querySelector('.nextBtnMonth').addEventListener('click', showNextMonthInCalendarScoped);
+    tableDiv.querySelector('.prevBtnMonth').addEventListener('click', showPrevMonthInCalendarScoped);
+    tableDiv.querySelector('.nextBtnYear').addEventListener('click', showNextYearInCalendarScoped);
+    tableDiv.querySelector('.prevBtnYear').addEventListener('click', showPrevYearInCalendarScoped);
   }
   createTable();
 
@@ -44,7 +153,9 @@ function createCalendar() {
   fillTheHeadOfTable();
  
   function createBodyOfTable() {
-    table.lastElementChild.after(document.createElement('tbody'));
+    const tableBody = document.createElement('tbody');
+    tableBody.classList.add('calendar-tbody');
+    table.lastElementChild.after(tableBody);
   }
   createBodyOfTable();
 
@@ -81,11 +192,11 @@ function createCalendar() {
 
   function mapTheCalendarWithDays(day) {
     let nextDay = null;
+    let dateNow = new Date();
     setNextDay(day);
     if (table.children[2].lastElementChild.children.length < 7) {
       nextDay = document.createElement('td');
       nextDay.textContent = day.getDate();
-      let dateNow = new Date();
       if (month === dateNow.getMonth() && (year === dateNow.getFullYear()) && (day.getDate() === dateNow.getDate())) {
         nextDay.classList.add('today');
       }
@@ -95,6 +206,9 @@ function createCalendar() {
       nextDay = document.createElement('td');
       nextDay.textContent = day.getDate();
       table.children[2].lastElementChild.append(nextDay);
+      if (month === dateNow.getMonth() && (year === dateNow.getFullYear()) && (day.getDate() === dateNow.getDate())) {
+        nextDay.classList.add('today');
+      }
     }
   }
 
@@ -118,117 +232,112 @@ function createCalendar() {
       }
   }
   fillTheCalendarWithDaysOfTheNextMonth();
-  createCalendarArrows();
-}
-window.onload = createCalendar();
 
+  function showNextMonthInCalendar(monthInp) {
+    let month = monthInp;
+    return function() {
+      month++;
+      createCalendar(this.closest('.calendar-container'), 'after', month, year);
+      addHoverCalendarDateCellHandlers();
+      this.closest('.calendar-container').remove();
+    } 
+  }
 
-function createCalendarArrows() {
-  const leftArrowMonth = document.createElement('i');
-  const rightArrowMonth = document.createElement('i');
-  const leftArrowYear = document.createElement('i');
-  const rightArrowYear = document.createElement('i');
-
-  leftArrowMonth.classList.add('fa', 'fa-angle-left');
-  rightArrowMonth.classList.add('fa', 'fa-angle-right');
-  leftArrowYear.classList.add('fa', 'fa-angle-double-left');
-  rightArrowYear.classList.add('fa', 'fa-angle-double-right');
-  leftArrowMonth.id = 'prevBtnMonth';
-  rightArrowMonth.id = 'nextBtnMonth';
-  leftArrowYear.id = 'prevBtnYear';
-  rightArrowYear.id = 'nextBtnYear';
-  document.body.append(leftArrowMonth, rightArrowMonth, leftArrowYear, rightArrowYear);
-  addHandlersCalendarArrows();
-}
-
-function showNextMonthInCalendar() {
-  document.querySelector('.calendar').remove();
-  month++;
-  createCalendar();
-  reloadHandlers();
-  changeBackgroundImg(backgroundImages[randomNumber(0, backgroundImages.length)]);
-}
-
-function showPrevMonthInCalendar() {
-  document.querySelector('.calendar').remove();                                                  
-  month--;
-  createCalendar();
-  reloadHandlers();
-  changeBackgroundImg(backgroundImages[randomNumber(0, backgroundImages.length)]);
-}
-
-function showNextYearInCalendar() {
-  document.querySelector('.calendar').remove();                                                  
-  year++;
-  createCalendar();
-  reloadHandlers();
-  changeBackgroundImg(backgroundImages[randomNumber(0, backgroundImages.length)]);
+  function showPrevMonthInCalendar(monthInp) {
+    let month = monthInp;
+    return function() {
+      month--;
+      createCalendar(this.closest('.calendar-container'), 'after', month, year);
+      addHoverCalendarDateCellHandlers();
+      this.closest('.calendar-container').remove();
+    }                                          
+  }
+  
+  function showNextYearInCalendar(yearInp) {
+    let year = yearInp;
+    return function() {
+      year++;
+      createCalendar(this.closest('.calendar-container'), 'after', month, year);
+      addHoverCalendarDateCellHandlers();
+      this.closest('.calendar-container').remove();
+    }                                         
+  }
+  
+  function showPrevYearInCalendar(yearInp) {
+    let year = yearInp;
+    return function() {
+      year--;
+      createCalendar(this.closest('.calendar-container'), 'after', month, year);
+      addHoverCalendarDateCellHandlers();
+      this.closest('.calendar-container').remove();
+    }
+  }
+  addHoverCalendarDateCellHandlers();
 }
 
-function showPrevYearInCalendar() {
-  document.querySelector('.calendar').remove();                                                  
-  year--;
-  createCalendar();
-  reloadHandlers();
-  changeBackgroundImg(backgroundImages[randomNumber(0, backgroundImages.length)]);
+function addHoverCalendarDateCellHandlers() {
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.removeEventListener('mouseover', hoverCalendarDateCell));
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.removeEventListener('mouseout', hoverCalendarDateCell));
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.removeEventListener('click', markSelectedCalendarDateCell));
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.addEventListener('mouseover', hoverCalendarDateCell));
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.addEventListener('mouseout', hoverCalendarDateCell));
+    [...document.querySelectorAll('.calendar-tbody')].forEach(tbody => tbody.addEventListener('click', markSelectedCalendarDateCell));
 }
 
-function addHandlersCalendarArrows() {
-  document.getElementById('nextBtnMonth').addEventListener('click', showNextMonthInCalendar);
-  document.getElementById('prevBtnMonth').addEventListener('click', showPrevMonthInCalendar);
-  document.getElementById('nextBtnYear').addEventListener('click', showNextYearInCalendar);
-  document.getElementById('prevBtnYear').addEventListener('click', showPrevYearInCalendar);
+function hoverCalendarDateCell(e) {
+  const dataInCalendarArr = e.target.closest('.calendar').firstElementChild.textContent.split(' ');
+  const monthInCalendar = monthsArrForInputSelect.indexOf(dataInCalendarArr[0]) - 1;
+  const yearInCalendar = parseInt(dataInCalendarArr[1]);
+
+  const today = new Date();
+  if (e.target.closest('td')) {
+    if (e.type === 'mouseover') {
+      if (e.target.classList.contains('today')) {
+        e.target.classList.remove('today');
+      }
+      e.target.classList.add('hovered-cell');
+    } else if (e.type === 'mouseout') {
+      e.target.classList.remove('hovered-cell');
+        if ((yearInCalendar === today.getFullYear()) && (monthInCalendar === today.getMonth()) && (parseInt(e.target.textContent) === today.getDate()) && !e.target.classList.contains('another-month')) {
+          e.target.classList.add('today');
+        }
+          if ((yearInCalendar === today.getFullYear()) && (monthInCalendar === today.getMonth()) && (parseInt(e.target.textContent) === today.getDate() && e.target.classList.contains('selected-cell'))) {
+            e.target.classList.remove('today');
+        }
+    }
+  }
+}
+/* или вместо функции выше в styles.css добавить:
+  // td:hover {
+  //   background-color: yellowgreen;
+  // }
+*/
+
+function markSelectedCalendarDateCell(e) {
+  if (e.target.closest('td')) {
+    delMarkSelectedCalendarDateCell(e);
+    checkForTodayToReturnTodaySelectionInCalendar(e);
+    if (e.target.classList.contains('today')) {
+      e.target.classList.remove('today');
+    }
+    e.target.classList.add('selected-cell');
+  }
 }
 
-function reloadHandlers() {
-  document.getElementById('nextBtnMonth').remove();
-  document.getElementById('prevBtnMonth').remove();
-  document.getElementById('nextBtnYear').remove();
-  document.getElementById('prevBtnYear').remove();
-  document.getElementById('nextBtnMonth').removeEventListener('click', showNextMonthInCalendar);
-  document.getElementById('prevBtnMonth').removeEventListener('click', showPrevMonthInCalendar);
-  document.getElementById('nextBtnYear').removeEventListener('click', showNextYearInCalendar);
-  document.getElementById('prevBtnYear').removeEventListener('click', showPrevYearInCalendar);
-  addHandlersCalendarArrows();
+function delMarkSelectedCalendarDateCell(e) {
+  [...e.target.closest('.calendar-tbody').querySelectorAll('td')].forEach(day => day.classList.remove('selected-cell'));
 }
 
-function randomNumber(min, max) {
-  return Math.floor(min + Math.random() * (max + 1 - min));
+function checkForTodayToReturnTodaySelectionInCalendar(e) {
+  const dataInCalendarArr = e.target.closest('.calendar').firstElementChild.textContent.split(' ');
+  const monthInCalendar = monthsArrForInputSelect.indexOf(dataInCalendarArr[0]) - 1;
+  const yearInCalendar = parseInt(dataInCalendarArr[1]);
+  const today = new Date();
+  if ((yearInCalendar === today.getFullYear()) && (monthInCalendar === today.getMonth()) && (parseInt(e.target.textContent) !== today.getDate())) {
+    [...e.target.closest('.calendar-tbody').querySelectorAll('td')].forEach(day => {
+      if ((yearInCalendar === today.getFullYear()) && (monthInCalendar === today.getMonth()) && (parseInt(day.textContent) === today.getDate()) && !day.classList.contains('another-month')) {
+        day.classList.add('today');
+      }
+    });
+  }
 }
-
-function changeBackgroundImg(link) {
-  console.log(link)
-  document.body.style.backgroundImage = `url(${link})`;
-}
-
-// setInterval(()=> {
-//   month++;
-//   document.querySelector('.calendar').remove();
-//   createCalendar(month, year)
-// }, 1000)
-
-const backgroundImages = [
-  // 'https://images.unsplash.com/photo-1469122312224-c5846569feb1?crop=entropy\u0026cs=tinysrgb\u0026fm=jpg\u0026ixid=MnwzOTgwMDV8MHwxfHJhbmRvbXx8fHx8fHx8fDE2Nzc2MDcxNzE\u0026ixlib=rb-4.0.3\u0026q=80',
-  'https://live.staticflickr.com/65535/52718087358_831de67d59_k.jpg',
-  'https://live.staticflickr.com/65535/52717411851_7b22181091_k.jpg',
-  'https://live.staticflickr.com/65535/52717378616_2bc9d9e9de_k.jpg',
-  'https://live.staticflickr.com/65535/52716769514_b5ffb9890a_k.jpg',
-  'https://live.staticflickr.com/65535/52709728893_d5084006c6_k.jpg',
-  'https://live.staticflickr.com/65535/52716650453_7d4c08515d_k.jpg',
-  'https://live.staticflickr.com/65535/52715631431_718d6a1988_k.jpg',
-  'https://live.staticflickr.com/65535/52716974282_86259a7f12_k.jpg',
-  'https://live.staticflickr.com/65535/52717134092_72c8519459_k.jpg',
-  'https://live.staticflickr.com/65535/52718136868_28a6f3b4c1_k.jpg',
-  'https://live.staticflickr.com/65535/52716737045_86121798f5_k.jpg',
-  'https://live.staticflickr.com/65535/52717345324_c4a4573364_k.jpg',
-  'https://live.staticflickr.com/65535/52711417771_19167d393c_k.jpg',
-  'https://live.staticflickr.com/65535/52713372785_be57edb99d_k.jpg',
-  'https://live.staticflickr.com/65535/52717419398_031f8097fe_k.jpg',
-  'https://live.staticflickr.com/65535/52717248303_6f6df1866b_k.jpg',
-  'https://live.staticflickr.com/65535/52717508633_638c83f427_k.jpg',
-  'https://live.staticflickr.com/65535/52706671664_43a086b7a9_k.jpg',
-  'https://live.staticflickr.com/65535/52718032669_1e28c61ee6_k.jpg',
-  'https://live.staticflickr.com//65535//52718161945_fe7eef0f30_k.jpg',
-  'https://live.staticflickr.com/65535/52718121690_9cac9788d2_k.jpg',
-  'https://live.staticflickr.com/65535/52717554341_4c1c5d9f27_k.jpg',
-]
